@@ -1,0 +1,21 @@
+version: '3.4'
+services:
+  php:
+    build:
+      context: ./api
+      target: php
+    env_file:
+      - ./api/.env
+    volumes:
+      - ./api:/srv/api:rw,cached
+
+  nginx-api:
+    build:
+      context: ./api
+      target: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - php
+    volumes:
+      - ./api/public:/srv/api/public:ro
