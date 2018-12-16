@@ -19,3 +19,12 @@ services:
       - php
     volumes:
       - ./api/public:/srv/api/public:ro
+
+  h2-proxy:
+    # Don't use this proxy in prod
+    build:
+      context: ./h2-proxy
+    depends_on:
+      - nginx-api
+    ports:
+      - "443:443"

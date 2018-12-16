@@ -74,6 +74,8 @@ RUN set -eux; \
 COPY bin bin/
 COPY config config/
 COPY public public/
+COPY translations translations/
+COPY templates templates/
 COPY src src/
 
 RUN set -eux; \
