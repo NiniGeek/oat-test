@@ -1,0 +1,44 @@
+imports:
+  - { resource: "parameters.yaml"}
+
+services:
+
+  test_taker.event_listener.api_exception:
+    class: App\TestTaker\App\EventListener\ApiExceptionListener
+    arguments: ['%%kernel.debug%%']
+    tags:
+      - { name: kernel.event_listener, event: kernel.exception, method: onKernelException, priority: 200 }
+
+  test_taker.event_listener.cors_listener:
+    class: App\TestTaker\App\EventListener\CorsListener
+    tags:
+      - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+
+  test_taker.support.app_entity_repository:
+    class: App\TestTaker\App\Support\AppEntityRepository
+    arguments: ["@test_taker.infrastructure.data_provider"]
+
+  test_taker.user.service:
+    class: App\TestTaker\Domain\User\UserService
+    arguments: ["@test_taker.user.repository"]
+  App\TestTaker\Domain\User\UserService: "@test_taker.user.service"
+
+  test_taker.user.repository:
+    class: App\TestTaker\Infrastructure\User\UserRepository
+    parent: test_taker.support.app_entity_repository
+
+  test_taker.infrastructure.data_provider:
+    class: App\TestTaker\Infrastructure\DataProvider\DataProvider
+    arguments:
+      - ["@test_taker.infrastructure.data_provider.csv_adapter", "@test_taker.infrastructure.data_provider.json_adapter"]
+      - "%source_data_options%"
+      - "@validator"
+      - "@logger"
+
+  test_taker.infrastructure.data_provider.csv_adapter:
+    class: App\TestTaker\Infrastructure\DataProvider\Adapter\CsvAdapter
+    arguments: ["@serializer"]
+
+  test_taker.infrastructure.data_provider.json_adapter:
+    class: App\TestTaker\Infrastructure\DataProvider\Adapter\JsonAdapter
+    arguments: ["@serializer"]

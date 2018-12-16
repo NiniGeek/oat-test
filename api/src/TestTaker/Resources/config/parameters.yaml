@@ -1,0 +1,3 @@
+parameters:
+  source_data_options:
+    path: "%kernel.root_dir%/TestTaker/Resources/data/testtakers.csv"
